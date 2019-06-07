@@ -49,5 +49,15 @@ namespace Taskbar
 
             btnIisResetFlushTemp.IsEnabled = true;
         }
+
+        private void Window_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Width = 100;
+        }
+
+        private void Window_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Width = 10;
+        }
     }
 }
