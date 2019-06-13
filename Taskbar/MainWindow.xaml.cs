@@ -15,43 +15,62 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Taskbar
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifiable
     {
-        private List<ApplicationButton> AppButtons = new List<ApplicationButton>();
+        private List<ApplicationButton> appButtons = new List<ApplicationButton>();
+        private Chronometer chronometer = new Chronometer();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            AppButtons.Add(new ApplicationButton { Button = btnTaskManager, IconPath = @"C:\Windows\system32\taskmgr.exe" });
+            appButtons.Add(new ApplicationButton { Button = btnTaskManager, IconPath = @"C:\Windows\system32\taskmgr.exe" });
 
             Background = Brushes.Gray;
             Height = SystemParameters.WorkArea.Height;
             Top = 0;
             Left = 0;
+            chronometer.AddNotifiable(this);
 
+            SetupChronoButtons();
             SetupAppButtons();
         }
 
         private void SetupAppButtons()
         {
             int btnCount = 0;
-            foreach (ApplicationButton button in AppButtons)
+            foreach (ApplicationButton button in appButtons)
             {
                 var icon = System.Drawing.Icon.ExtractAssociatedIcon(@"C:\Windows\system32\taskmgr.exe");
                 button.Button.Content = new Image { Source = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) };
                 button.Button.Width = 30;
                 button.Button.Height = 30;
-                button.Button.Margin = new Thickness(btnCount * 30, SystemParameters.WorkArea.Height - 30, 0, 0);
+                button.Button.Margin = new Thickness(btnCount * 30, SystemParameters.WorkArea.Height - 100, 0, 0);
 
                 btnCount++;
             }
+        }
+
+        private void SetupChronoButtons()
+        {
+            btnStartStopChrono.Margin = new Thickness(0, SystemParameters.WorkArea.Height - 30, 0, 0);
+            btnStartStopChrono.Height = 30;
+            btnStartStopChrono.Width = 30;
+
+            btnResetChrono.Margin = new Thickness(30, SystemParameters.WorkArea.Height - 30, 0, 0);
+            btnResetChrono.Height = 30;
+            btnResetChrono.Width = 30;
+
+            lblChrono.Margin = new Thickness(60, SystemParameters.WorkArea.Height - 30, 0, 0);
+            lblChrono.Height = 30;
+            lblChrono.Width = 40;
         }
 
         private void BtnIisResetFlushTemp_Click(object sender, RoutedEventArgs e)
@@ -91,6 +110,32 @@ namespace Taskbar
             process.Start();
 
             return process;
+        }
+
+        private void BtnStartStopChrono_Click(object sender, RoutedEventArgs e)
+        {
+            if (chronometer.IsRunning)
+            {
+                chronometer.Stop();
+                btnStartStopChrono.Content = "Start";
+            }
+            else
+            {
+                chronometer.Start();
+                btnStartStopChrono.Content = "Stop";
+            }
+        }
+
+        private void BtnResetChrono_Click(object sender, RoutedEventArgs e)
+        {
+            chronometer.Reset();
+            btnStartStopChrono.Content = "Start";
+            lblChrono.Content = "0.0";
+        }
+
+        public void Notify()
+        {
+            lblChrono.Content = chronometer.Elapsed.TotalSeconds;
         }
     }
 }

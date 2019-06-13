@@ -65,6 +65,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ApplicationButton.cs" />
+    <Compile Include="Chronometer.cs" />
+    <Compile Include="INotifiable.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
