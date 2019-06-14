@@ -36,6 +36,11 @@ namespace Taskbar
             notifiables.Add(notifiable);
         }
 
+        public void SetFrequency(TimeSpan timeSpan)
+        {
+            timer.Interval = timeSpan;
+        }
+
         public void Start()
         {
             stopwatch.Start();

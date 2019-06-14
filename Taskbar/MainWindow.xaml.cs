@@ -38,6 +38,7 @@ namespace Taskbar
             Top = 0;
             Left = 0;
             chronometer.AddNotifiable(this);
+            chronometer.SetFrequency(TimeSpan.FromSeconds(0.5));
 
             SetupChronoButtons();
             SetupAppButtons();
@@ -63,10 +64,12 @@ namespace Taskbar
             btnStartStopChrono.Margin = new Thickness(0, SystemParameters.WorkArea.Height - 30, 0, 0);
             btnStartStopChrono.Height = 30;
             btnStartStopChrono.Width = 30;
+            btnStartStopChrono.Background = Brushes.Green;
 
             btnResetChrono.Margin = new Thickness(30, SystemParameters.WorkArea.Height - 30, 0, 0);
             btnResetChrono.Height = 30;
             btnResetChrono.Width = 30;
+            btnResetChrono.Background = Brushes.Yellow;
 
             lblChrono.Margin = new Thickness(60, SystemParameters.WorkArea.Height - 30, 0, 0);
             lblChrono.Height = 30;
@@ -118,11 +121,13 @@ namespace Taskbar
             {
                 chronometer.Stop();
                 btnStartStopChrono.Content = "Start";
+                btnStartStopChrono.Background = Brushes.Green;
             }
             else
             {
                 chronometer.Start();
                 btnStartStopChrono.Content = "Stop";
+                btnStartStopChrono.Background = Brushes.Red;
             }
         }
 
@@ -135,7 +140,7 @@ namespace Taskbar
 
         public void Notify()
         {
-            lblChrono.Content = chronometer.Elapsed.TotalSeconds;
+            lblChrono.Content = Math.Round(chronometer.Elapsed.TotalSeconds, 2);
         }
     }
 }
