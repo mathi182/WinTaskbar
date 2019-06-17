@@ -7,10 +7,12 @@
         mc:Ignorable="d" Width="100" Topmost="True" ResizeMode="NoResize" WindowStyle="None" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" ShowInTaskbar="False">
     <Grid>
         <Button x:Name="btnIisResetFlushTemp" Content="IIS + Flush temp" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="100" Click="BtnIisResetFlushTemp_Click"/>
-        <Button x:Name="btnTaskManager" Content="TM" HorizontalAlignment="Left" Margin="10,474,0,0" VerticalAlignment="Top" Width="31" Click="BtnTaskManager_Click"/>
+        <Button x:Name="btnTaskManager" Content="TM" HorizontalAlignment="Left" Margin="0,435,0,0" VerticalAlignment="Top" Width="31" Click="BtnTaskManager_Click"/>
         <Button x:Name="btnStartStopChrono" Content="Start" HorizontalAlignment="Left" Margin="0,505,0,0" VerticalAlignment="Top" Width="41" Click="BtnStartStopChrono_Click"/>
         <Button x:Name="btnResetChrono" Content="Reset" HorizontalAlignment="Left" Margin="46,505,0,0" VerticalAlignment="Top" Width="31" Click="BtnResetChrono_Click"/>
         <Label x:Name="lblChrono" Content="" HorizontalAlignment="Left" Margin="82,502,-5,0" VerticalAlignment="Top" Width="23"/>
+        <Button x:Name="btnTimer" Content="Start" HorizontalAlignment="Left" Margin="0,470,0,0" VerticalAlignment="Top" Width="31"/>
+        <TextBox x:Name="txtTimer" HorizontalAlignment="Left" Height="23" Margin="54,470,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="46" KeyDown="TxtTimer_KeyDown" TextChanged="TxtTimer_TextChanged"/>
 
     </Grid>
 </Window>

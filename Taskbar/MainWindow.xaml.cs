@@ -24,6 +24,8 @@ namespace Taskbar
     /// </summary>
     public partial class MainWindow : Window, INotifiable
     {
+        private const int WIDTH_OPEN = 100;
+        private const int WIDTH_CLOSE = 10;
         private List<ApplicationButton> appButtons = new List<ApplicationButton>();
         private Chronometer chronometer = new Chronometer();
 
@@ -41,6 +43,7 @@ namespace Taskbar
             chronometer.SetFrequency(TimeSpan.FromSeconds(0.5));
 
             SetupChronoButtons();
+            SetupTimerButtons();
             SetupAppButtons();
         }
 
@@ -59,12 +62,24 @@ namespace Taskbar
             }
         }
 
+        private void SetupTimerButtons()
+        {
+            btnTimer.Margin = new Thickness(0, btnStartStopChrono.Margin.Top - 30, 0, 0);
+            btnTimer.Width = 30;
+            btnTimer.Height = 30;
+            btnTimer.Background = Brushes.LightGreen;
+
+            txtTimer.Margin = new Thickness(30, btnTimer.Margin.Top, 0, 0);
+            txtTimer.Height = 30;
+            txtTimer.Width = WIDTH_OPEN - 30;
+        }
+
         private void SetupChronoButtons()
         {
             btnStartStopChrono.Margin = new Thickness(0, SystemParameters.WorkArea.Height - 30, 0, 0);
             btnStartStopChrono.Height = 30;
             btnStartStopChrono.Width = 30;
-            btnStartStopChrono.Background = Brushes.Green;
+            btnStartStopChrono.Background = Brushes.LightGreen;
 
             btnResetChrono.Margin = new Thickness(30, SystemParameters.WorkArea.Height - 30, 0, 0);
             btnResetChrono.Height = 30;
@@ -90,12 +105,12 @@ namespace Taskbar
 
         private void Window_MouseEnter(object sender, MouseEventArgs e)
         {
-            Width = 100;
+            Width = WIDTH_OPEN;
         }
 
         private void Window_MouseLeave(object sender, MouseEventArgs e)
         {
-            Width = 10;
+            Width = WIDTH_CLOSE;
         }
 
         private void BtnTaskManager_Click(object sender, RoutedEventArgs e)
@@ -121,7 +136,7 @@ namespace Taskbar
             {
                 chronometer.Stop();
                 btnStartStopChrono.Content = "Start";
-                btnStartStopChrono.Background = Brushes.Green;
+                btnStartStopChrono.Background = Brushes.LightGreen;
             }
             else
             {
@@ -135,12 +150,28 @@ namespace Taskbar
         {
             chronometer.Reset();
             btnStartStopChrono.Content = "Start";
+            btnStartStopChrono.Background = Brushes.LightGreen;
             lblChrono.Content = "0.0";
         }
 
         public void Notify()
         {
             lblChrono.Content = Math.Round(chronometer.Elapsed.TotalSeconds, 2);
+        }
+
+        private void TxtTimer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key < Key.D0 || e.Key > Key.NumPad9)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key > Key.D9 && e.Key < Key.NumPad0)
+            {
+                e.Handled = true;
+                return;
+            }
         }
     }
 }
