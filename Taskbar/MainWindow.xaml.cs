@@ -14,7 +14,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Taskbar
@@ -141,6 +140,19 @@ namespace Taskbar
         public void Notify()
         {
             lblChrono.Content = Math.Round(chronometer.Elapsed.TotalSeconds, 2);
+        }
+
+        private void BtnFlushBinDll_Click(object sender, RoutedEventArgs e)
+        {
+            string workingDirectory = @"C:\TFS\git1";
+
+            foreach (var file in Directory.EnumerateFiles(Path.Combine(workingDirectory, @"WebSite\Bin"), "*.dll", SearchOption.AllDirectories))
+            {
+                if (file.ToLower().Contains("roslyn"))
+                    continue;
+
+                File.Delete(file);
+            }
         }
     }
 }
