@@ -78,13 +78,24 @@ namespace Taskbar
         private void BtnIisResetFlushTemp_Click(object sender, RoutedEventArgs e)
         {
             btnIisResetFlushTemp.IsEnabled = false;
+            btnIisResetFlushTemp.Background = Brushes.Red;
+            
+            try
+            {
+                Process process = StartProcess("IISReset.exe");
+                process.WaitForExit();
 
-            Process process = StartProcess("IISReset.exe");
-            process.WaitForExit();
-
-            Directory.Delete(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root", true);
-
-            btnIisResetFlushTemp.IsEnabled = true;
+                Directory.Delete(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root", true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                btnIisResetFlushTemp.IsEnabled = true;
+                btnIisResetFlushTemp.ClearValue(BackgroundProperty);
+            }
         }
 
         private void Window_MouseEnter(object sender, MouseEventArgs e)
@@ -144,14 +155,28 @@ namespace Taskbar
 
         private void BtnFlushBinDll_Click(object sender, RoutedEventArgs e)
         {
-            string workingDirectory = @"C:\TFS\git1";
-
-            foreach (var file in Directory.EnumerateFiles(Path.Combine(workingDirectory, @"WebSite\Bin"), "*.dll", SearchOption.AllDirectories))
+            btnFlushBinDll.IsEnabled = false;
+            btnFlushBinDll.Background = Brushes.Red;
+            try
             {
-                if (file.ToLower().Contains("roslyn"))
-                    continue;
+                string workingDirectory = @"C:\TFS\git1";
 
-                File.Delete(file);
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(workingDirectory, @"WebSite\Bin"), "*.dll", SearchOption.AllDirectories))
+                {
+                    if (file.ToLower().Contains("roslyn"))
+                        continue;
+
+                    File.Delete(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                btnFlushBinDll.IsEnabled = true;
+                btnFlushBinDll.ClearValue(BackgroundProperty);
             }
         }
     }
