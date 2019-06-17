@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +15,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Taskbar
@@ -93,14 +93,25 @@ namespace Taskbar
 
         private void BtnIisResetFlushTemp_Click(object sender, RoutedEventArgs e)
         {
-            btnIisResetFlushTemp.IsEnabled = false;
+            btnIisResetFlushTemp.Background = Brushes.Red;
 
-            Process process = StartProcess("IISReset.exe");
-            process.WaitForExit();
+            ThreadHelper.CreateAndStart(() =>
+            {
+                try
+                {
+                    Process process = StartProcess("IISReset.exe");
+                    process.WaitForExit();
 
-            Directory.Delete(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root", true);
-
-            btnIisResetFlushTemp.IsEnabled = true;
+                    Directory.Delete(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root", true);
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        btnIisResetFlushTemp.ClearValue(BackgroundProperty);
+                    });
+                }
+            });
         }
 
         private void Window_MouseEnter(object sender, MouseEventArgs e)
@@ -157,6 +168,28 @@ namespace Taskbar
         public void Notify()
         {
             lblChrono.Content = Math.Round(chronometer.Elapsed.TotalSeconds, 2);
+        }
+
+        private void BtnFlushBinDll_Click(object sender, RoutedEventArgs e)
+        {
+            btnFlushBinDll.Background = Brushes.Red;
+
+            try
+            {
+                string workingDirectory = @"C:\TFS\git1";
+
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(workingDirectory, @"WebSite\Bin"), "*.dll", SearchOption.AllDirectories))
+                {
+                    if (file.ToLower().Contains("roslyn"))
+                        continue;
+
+                    File.Delete(file);
+                }
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => btnFlushBinDll.ClearValue(BackgroundProperty));
+            }
         }
 
         private void TxtTimer_KeyDown(object sender, KeyEventArgs e)

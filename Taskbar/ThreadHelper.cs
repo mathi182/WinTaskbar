@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Taskbar
+{
+    public class ThreadHelper
+    {
+        public ThreadHelper()
+        {
+
+        }
+
+        public static Thread CreateAndStart(Action action)
+        {
+            Thread t = new Thread(new ThreadStart(action));
+            t.Start();
+
+            return t;
+        }
+    }
+}
