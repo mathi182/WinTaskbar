@@ -14,6 +14,7 @@
         <Button x:Name="btnFlushBinDll" Content="Flush bin DLLs" HorizontalAlignment="Left" Margin="0,35,0,0" VerticalAlignment="Top" Width="100" Click="BtnFlushBinDll_Click"/>
         <Button x:Name="btnTimer" Content="Start" HorizontalAlignment="Left" Margin="0,470,0,0" VerticalAlignment="Top" Width="31"/>
         <TextBox x:Name="txtTimer" HorizontalAlignment="Left" Height="23" Margin="54,470,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="46" KeyDown="TxtTimer_KeyDown"/>
+        <Button x:Name="btnFlushBinObjFolders" Content="Del obj &amp; bin" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Width="100" Click="btnFlushBinObjFolders_Click"/>
 
     </Grid>
 </Window>

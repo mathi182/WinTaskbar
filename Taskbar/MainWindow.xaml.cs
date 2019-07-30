@@ -206,5 +206,25 @@ namespace Taskbar
                 return;
             }
         }
+
+        private void btnFlushBinObjFolders_Click(object sender, RoutedEventArgs e)
+        {
+            btnFlushBinDll.Background = Brushes.Red;
+
+            try
+            {
+                string workingDirectory = @"C:\TFS\git1";
+
+                foreach (var directory in Directory.EnumerateDirectories(workingDirectory, "*", SearchOption.AllDirectories).Where(d => !d.ToLower().Contains("website") && (d.ToLower().EndsWith(@"\bin") || d.ToLower().EndsWith(@"\obj"))))
+                {
+                    foreach (var file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
+                        File.Delete(file);
+                }
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => btnFlushBinDll.ClearValue(BackgroundProperty));
+            }
+        }
     }
 }
