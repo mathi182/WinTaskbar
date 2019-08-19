@@ -28,6 +28,9 @@ namespace Taskbar
         private const int WIDTH_CLOSE = 10;
         private List<ApplicationButton> appButtons = new List<ApplicationButton>();
         private Chronometer chronometer = new Chronometer();
+        private const string BASE_ROOT = @"C:\Tfs";
+
+        private string Workspace => cbo_workspace.SelectedItem.ToString();
 
         public MainWindow()
         {
@@ -42,6 +45,11 @@ namespace Taskbar
             chronometer.AddNotifiable(this);
             chronometer.SetFrequency(TimeSpan.FromSeconds(0.5));
 
+            foreach (var folder in Directory.EnumerateDirectories(BASE_ROOT, "*", SearchOption.TopDirectoryOnly))
+                cbo_workspace.Items.Add(folder);
+
+            cbo_workspace.SelectedIndex = 0;
+
             SetupChronoButtons();
             SetupTimerButtons();
             SetupAppButtons();
@@ -49,7 +57,7 @@ namespace Taskbar
 
         private void SetupAppButtons()
         {
-            int btnCount = 0;
+            int btnCount = 1;
             foreach (ApplicationButton button in appButtons)
             {
                 var icon = System.Drawing.Icon.ExtractAssociatedIcon(@"C:\Windows\system32\taskmgr.exe");
@@ -176,9 +184,7 @@ namespace Taskbar
 
             try
             {
-                string workingDirectory = @"C:\TFS\git1";
-
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(workingDirectory, @"WebSite\Bin"), "*.dll", SearchOption.AllDirectories))
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(Workspace, @"Legacy\OFSYS\WebSite\Bin"), "*.dll", SearchOption.AllDirectories))
                 {
                     if (file.ToLower().Contains("roslyn"))
                         continue;
@@ -213,9 +219,7 @@ namespace Taskbar
 
             try
             {
-                string workingDirectory = @"C:\TFS\git1";
-
-                foreach (var directory in Directory.EnumerateDirectories(workingDirectory, "*", SearchOption.AllDirectories).Where(d => !d.ToLower().Contains("website") && (d.ToLower().EndsWith(@"\bin") || d.ToLower().EndsWith(@"\obj"))))
+                foreach (var directory in Directory.EnumerateDirectories(Workspace, "*", SearchOption.AllDirectories).Where(d => !d.ToLower().Contains("website") && (d.ToLower().EndsWith(@"\bin") || d.ToLower().EndsWith(@"\obj"))))
                 {
                     foreach (var file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
                         File.Delete(file);
