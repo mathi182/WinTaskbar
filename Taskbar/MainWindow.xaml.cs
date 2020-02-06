@@ -37,6 +37,7 @@ namespace Taskbar
             InitializeComponent();
 
             appButtons.Add(new ApplicationButton { Button = btnTaskManager, IconPath = @"C:\Windows\system32\taskmgr.exe" });
+            appButtons.Add(new ApplicationButton { Button = btnSqlTransferer, IconPath = @"C:\Users\mboily\Documents\SQLTransferer\bin\Debug\SQLTransferer.exe" });
 
             Background = Brushes.Gray;
             Height = SystemParameters.WorkArea.Height;
@@ -60,7 +61,7 @@ namespace Taskbar
             int btnCount = 1;
             foreach (ApplicationButton button in appButtons)
             {
-                var icon = System.Drawing.Icon.ExtractAssociatedIcon(@"C:\Windows\system32\taskmgr.exe");
+                var icon = System.Drawing.Icon.ExtractAssociatedIcon(button.IconPath);
                 button.Button.Content = new Image { Source = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) };
                 button.Button.Width = 30;
                 button.Button.Height = 30;
@@ -229,6 +230,11 @@ namespace Taskbar
             {
                 Dispatcher.Invoke(() => btnFlushBinDll.ClearValue(BackgroundProperty));
             }
+        }
+
+        private void btnSqlTransferer_Click(object sender, RoutedEventArgs e)
+        {
+            StartProcess(@"C:\Users\mboily\Documents\SQLTransferer\bin\Debug\SQLTransferer.exe");
         }
     }
 }

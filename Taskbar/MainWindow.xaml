@@ -7,7 +7,7 @@
         mc:Ignorable="d" Width="100" Topmost="True" ResizeMode="NoResize" WindowStyle="None" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" ShowInTaskbar="False">
     <Grid>
         <Button x:Name="btnIisResetFlushTemp" Content="IIS + Flush temp" HorizontalAlignment="Left" Margin="0,31,0,0" VerticalAlignment="Top" Width="100" Click="BtnIisResetFlushTemp_Click"/>
-        <Button x:Name="btnTaskManager" Content="TM" HorizontalAlignment="Left" Margin="0,435,0,0" VerticalAlignment="Top" Width="31" Click="BtnTaskManager_Click"/>
+        <Button x:Name="btnTaskManager" Content="Task Manager" HorizontalAlignment="Left" Margin="0,435,0,0" VerticalAlignment="Top" Width="90" Click="BtnTaskManager_Click"/>
         <Button x:Name="btnStartStopChrono" Content="Start" HorizontalAlignment="Left" Margin="0,505,0,0" VerticalAlignment="Top" Width="41" Click="BtnStartStopChrono_Click"/>
         <Button x:Name="btnResetChrono" Content="Reset" HorizontalAlignment="Left" Margin="46,505,0,0" VerticalAlignment="Top" Width="31" Click="BtnResetChrono_Click"/>
         <Label x:Name="lblChrono" Content="" HorizontalAlignment="Left" Margin="82,502,-5,0" VerticalAlignment="Top" Width="23"/>
@@ -16,6 +16,7 @@
         <TextBox x:Name="txtTimer" HorizontalAlignment="Left" Height="23" Margin="54,470,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="46" KeyDown="TxtTimer_KeyDown"/>
         <Button x:Name="btnFlushBinObjFolders" Content="Del obj &amp; bin" HorizontalAlignment="Left" Margin="0,81,0,0" VerticalAlignment="Top" Width="100" Click="btnFlushBinObjFolders_Click"/>
         <ComboBox x:Name="cbo_workspace" HorizontalAlignment="Left" Margin="0,4,0,0" VerticalAlignment="Top" Width="100"/>
+        <Button x:Name="btnSqlTransferer" Content="SQL Transferer" HorizontalAlignment="Left" Margin="0,410,0,0" VerticalAlignment="Top" Width="90" Click="btnSqlTransferer_Click"/>
 
     </Grid>
 </Window>
