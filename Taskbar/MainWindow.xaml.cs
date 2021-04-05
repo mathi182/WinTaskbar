@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Taskbar.AdoAlerters;
 
 namespace Taskbar
 {
@@ -29,6 +30,7 @@ namespace Taskbar
         private List<ApplicationButton> appButtons = new List<ApplicationButton>();
         private Chronometer chronometer = new Chronometer();
         private const string BASE_ROOT = @"C:\Tfs";
+        private HighPriorityBugsAlerter highPriorityBugsAlerter = new HighPriorityBugsAlerter();
 
         private string Workspace => cbo_workspace.SelectedItem.ToString();
 
@@ -38,6 +40,8 @@ namespace Taskbar
 
             appButtons.Add(new ApplicationButton { Button = btnTaskManager, IconPath = @"C:\Windows\system32\taskmgr.exe" });
             appButtons.Add(new ApplicationButton { Button = btnSqlTransferer, IconPath = @"C:\Users\mboily\Documents\SQLTransferer\bin\Debug\SQLTransferer.exe" });
+            appButtons.Add(new ApplicationButton { Button = btnBugToAzure, IconPath = @"C:\Users\mboily\Documents\MailboxToAzureTransferer\bin\Debug\MailboxToAzureTransferer.exe" });
+            appButtons.Add(new ApplicationButton { Button = btnChangelogs, IconPath = @"C:\Users\mboily\Documents\Tools\DeploymentChangelogLister\bin\Debug\DeploymentChangelogLister.exe" });
 
             Background = Brushes.Gray;
             Height = SystemParameters.WorkArea.Height;
@@ -58,14 +62,17 @@ namespace Taskbar
 
         private void SetupAppButtons()
         {
-            int btnCount = 1;
+            int btnCount = 0;
             foreach (ApplicationButton button in appButtons)
             {
                 var icon = System.Drawing.Icon.ExtractAssociatedIcon(button.IconPath);
                 button.Button.Content = new Image { Source = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) };
                 button.Button.Width = 30;
                 button.Button.Height = 30;
-                button.Button.Margin = new Thickness(btnCount * 30, SystemParameters.WorkArea.Height - 100, 0, 0);
+
+                double left = btnCount % 3 == 0 ? 0 : btnCount * 30;
+                double top = SystemParameters.WorkArea.Height - 100 - (Math.Floor((double)btnCount / 3) * 30);
+                button.Button.Margin = new Thickness(left, top, 0, 0);
 
                 btnCount++;
             }
@@ -106,20 +113,28 @@ namespace Taskbar
 
             ThreadHelper.CreateAndStart(() =>
             {
-                try
+                for (int i = 0; i <= 5; i++)
                 {
-                    Process process = StartProcess("IISReset.exe");
-                    process.WaitForExit();
-
-                    Directory.Delete(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root", true);
-                }
-                finally
-                {
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        btnIisResetFlushTemp.ClearValue(BackgroundProperty);
-                    });
-                }
+                        Process process = StartProcess("IISReset.exe");
+                        process.WaitForExit();
+
+                        Directory.Delete(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root", true);
+                        break;
+                    }
+                    catch when (i < 5)
+                    {
+                        Thread.Sleep(500);
+                    }
+                    finally
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            btnIisResetFlushTemp.ClearValue(BackgroundProperty);
+                        });
+                    }
+                }                
             });
         }
 
@@ -235,6 +250,24 @@ namespace Taskbar
         private void btnSqlTransferer_Click(object sender, RoutedEventArgs e)
         {
             StartProcess(@"C:\Users\mboily\Documents\SQLTransferer\bin\Debug\SQLTransferer.exe");
+        }
+
+        private void btnBugToAzure_Click(object sender, RoutedEventArgs e)
+        {
+            StartProcess(@"C:\Users\mboily\Documents\MailboxToAzureTransferer\bin\Debug\MailboxToAzureTransferer.exe");
+        }
+
+        private void btnChangelogs_Click(object sender, RoutedEventArgs e)
+        {
+            StartProcess(@"C:\Users\mboily\Documents\Tools\DeploymentChangelogLister\bin\Debug\DeploymentChangelogLister.exe");
+        }
+
+        private void chkHighPriorityBugsAlerter_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkHighPriorityBugsAlerter.IsChecked == true)
+                highPriorityBugsAlerter.Start();
+            else
+                highPriorityBugsAlerter.Stop();
         }
     }
 }
