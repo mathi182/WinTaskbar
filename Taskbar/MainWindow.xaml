@@ -19,6 +19,6 @@
         <Button x:Name="btnSqlTransferer" Content="SQL Transferer" HorizontalAlignment="Left" Margin="0,410,0,0" VerticalAlignment="Top" Width="90" Click="btnSqlTransferer_Click"/>
         <Button x:Name="btnBugToAzure" Content="Bug to Azure" HorizontalAlignment="Left" Margin="0,385,0,0" VerticalAlignment="Top" Width="90" Click="btnBugToAzure_Click"/>
         <Button x:Name="btnChangelogs" Content="Changelogs" HorizontalAlignment="Left" Margin="0,385,0,0" VerticalAlignment="Top" Width="90" Click="btnChangelogs_Click"/>
-        <CheckBox x:Name="chkHighPriorityBugsAlerter" Content="HP Bugs" Click="chkHighPriorityBugsAlerter_Click" Margin="0,115,0,-115"/>
+        <CheckBox x:Name="chkHighPriorityBugsAlerter" Content="HP Bugs" Click="chkHighPriorityBugsAlerter_Click" Margin="0,115,0,400"/>
     </Grid>
 </Window>

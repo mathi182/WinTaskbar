@@ -57,6 +57,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdoAlerters\HighPriorityBugsAlerter.cs" />
+    <Compile Include="AdoAlerters\WorkItem.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ThreadHelper.cs" />
     <Page Include="MainWindow.xaml">

@@ -58,6 +58,9 @@ namespace Taskbar
             SetupChronoButtons();
             SetupTimerButtons();
             SetupAppButtons();
+
+            chkHighPriorityBugsAlerter.Height = 20;
+            chkHighPriorityBugsAlerter.VerticalAlignment = VerticalAlignment.Top;
         }
 
         private void SetupAppButtons()

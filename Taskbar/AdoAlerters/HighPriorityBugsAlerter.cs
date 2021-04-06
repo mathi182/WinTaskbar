@@ -44,7 +44,7 @@ namespace Taskbar.AdoAlerters
                     continue;
                 }
 
-                dtLastCheck = now.AddMinutes(15);
+                dtLastCheck = now.AddMinutes(10);
                 string url = $"https://dev.azure.com/DialogInsight/Openfield/_apis/wit/queries/{AppSettings.IdQueryHighPriority}?api-version=6.0&$expand=clauses";
                 dynamic result = GetResultFromGetApi(url);
                 string wiql = result?.wiql?.ToString();
@@ -62,30 +62,52 @@ namespace Taskbar.AdoAlerters
                 };
                 string body = JsonConvert.SerializeObject(args);
                 result = GetResultFromPostApi(url, body);
-                List<string> urls = new List<string>();
+                List<int> ids = new List<int>();
                 foreach (var workitem in result.workItems)
-                    urls.Add($"https://dev.azure.com/DialogInsight/Openfield/_workitems/edit/{workitem.id.ToString()}");
+                    ids.Add((int)workitem.id);
 
-                if (urls.Any())
+                if (ids.Any())
                 {
-                    body = BuildMessageCard(urls);
-                    result = GetResultFromPostApi(AppSettings.HighPriorityBugsConnectorUrl, body);
+                    var workItems = GetWorkItems(ids.ToArray()).Where(w => w.DtCreated <= now.AddMinutes(-5));
+                    if (workItems.Any())
+                    {
+                        body = BuildMessageCard(workItems);
+                        GetResultFromPostApi(AppSettings.HighPriorityBugsConnectorUrl, body);
+                    }                    
                 }
             }
         }
 
-        private string BuildMessageCard(IEnumerable<string> urls)
+        private IEnumerable<WorkItem> GetWorkItems(params int[] id)
+        {
+            var workItems = new List<WorkItem>();
+            string url = $"https://dev.azure.com/DialogInsight/Openfield/_apis/wit/workitems?ids={string.Join(",", id)}&api-version=6.0";
+            dynamic result = GetResultFromGetApi(url);
+            foreach (var wi in result.value)
+            {
+                WorkItem workItem = new WorkItem();
+                workItem.Id = (int)wi.id;
+                workItem.DtCreated = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Parse(wi.fields["System.CreatedDate"].ToString()), TimeZoneInfo.Local);
+                workItem.Title = wi.fields["System.Title"].ToString();
+
+                workItems.Add(workItem);
+            }
+
+            return workItems;
+        }
+
+        private string BuildMessageCard(IEnumerable<WorkItem> workitems)
         {
             var paragraphs = new List<Dictionary<string, object>>();
             paragraphs.Add(new Dictionary<string, object> 
             { 
                 { "type", "TextBlock" },
-                { "text", "Bugs urgents en attente <at>TeamBravo</at>" }
+                { "text", "Bugs urgents en attente <at>Bugs</at>" }
             });
             paragraphs.Add(new Dictionary<string, object>
             {
                 { "type", "TextBlock" },
-                { "text", string.Join("\r", urls.Select(u => $"- [{u}]({u})").ToArray()) },
+                { "text", string.Join("\r", workitems.Select(u => $"- {u.Title} [{u.Url}]({u.Url})").ToArray()) },
                 { "wrap", true }
             });
             var dict = new Dictionary<string, object>
@@ -102,12 +124,13 @@ namespace Taskbar.AdoAlerters
                         { "body", paragraphs },
                         { "msteams", new Dictionary<string, object> 
                         {
+                            { "width", "Full" },
                             { "entities", new[] { new Dictionary<string, object> {
                                 { "type", "mention" },
-                                { "text", "<at>TeamBravo</at>" },
+                                { "text", "<at>Bugs</at>" },
                                 { "mentioned", new Dictionary<string, object> {
-                                    { "id", "19:a14ab1e0d16264377adc477d1b663c096%40thread.tacv2" },
-                                    { "name", "TeamBravo" }
+                                    { "id", "19:a14ab1e0d16264377adc477d1b663c096" },
+                                    { "name", "Bugs" }
                                 } }
                             } } }
                         } }
